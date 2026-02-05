@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-
+# TODO: remove asin
 def parse_kindle_books(path):
     """
     Parses Kindle for PC app's metadata XML file

@@ -19,6 +19,16 @@ VALID_GENRES = {
 }
 
 def extract_genres(subjects, max_genres=2):
+    """
+
+
+    Args:
+        subjects: a list of subjects/ genres
+        max_genres(int): maximum number of genres to return
+
+    Returns:
+        A string of all the valid found genres separated by a comma.
+    """
     if not subjects:
         return ""
 
