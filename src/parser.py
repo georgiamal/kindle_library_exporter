@@ -14,12 +14,27 @@ def parse_kindle_books(path):
             continue
 
         origin_type = meta.findtext("origins/origin/type")
+        # Skip default books, dictionaries etc
         if origin_type != "Purchase" and origin_type != "KindleUnlimited":
             continue
 
+        # Format authors in [First] [Last] name before appending
+        authors_raw = [a.text.strip() for a in meta.findall("authors/author") if a.text]
+
+        authors = []
+        for a in authors_raw:
+            if "," in a:
+                last, first = [x.strip() for x in a.split(",", 1)]
+                authors.append(f"{first} {last}")
+            else:
+                authors.append(a)  # already in correct order
+
+        # Join multiple authors with comma
+        author_str = ", ".join(authors)
+
         books.append({
             "title": meta.findtext("title"),
-            "author": meta.findtext("authors/author"),
+            "author": author_str,
             "asin": meta.findtext("ASIN"),
             "origin": meta.findtext("origins/origin/type"),
         })
