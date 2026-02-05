@@ -12,7 +12,7 @@ def parse_kindle_books(path):
     Returns:
         list[dict]: a list of dictionaries, each representing a Kindle ebook
         with the following keys:
-            - title (str): Book title
+            - title (str): Book title excluding anything in "()" or after ":"
             - author (str): Author name(s) in [First] [Last] format
             - asin (str): Amazon Standard Identification Number
             - origin (str): Ebook's origin (e.g. "Purchase", "KindleUnlimited").
@@ -31,6 +31,16 @@ def parse_kindle_books(path):
         if origin_type != "Purchase" and origin_type != "KindleUnlimited":
             continue
 
+        # Exclude anything from ":" and after from title
+        title_raw = meta.findtext("title")
+        if ":" in title_raw:
+            title = title_raw[:title_raw.index(":")]
+        else:
+            title = title_raw
+        # Exclude anything from "(" and after from title
+        if "(" in title:
+            title = title[:title.index("(")]
+
         # Format authors in [First] [Last] name before appending
         authors_raw = [a.text.strip() for a in meta.findall("authors/author") if a.text]
 
@@ -46,7 +56,7 @@ def parse_kindle_books(path):
         author_str = ", ".join(authors)
 
         books.append({
-            "title": meta.findtext("title"),
+            "title": title,
             "author": author_str,
             "asin": meta.findtext("ASIN"),
             "origin": meta.findtext("origins/origin/type"),
