@@ -2,7 +2,20 @@ import xml.etree.ElementTree as ET
 
 def parse_kindle_books(path):
     """
+    Parses Kindle for PC app's metadata XML file
+    and extracts user's purchased or borrowed (Kindle Unlimited)
+    ebook information excluding any default books like dictionaries.
 
+    Args:
+        path: path to the KindleSyncMetadataCache.xml file.
+
+    Returns:
+        list[dict]: a list of dictionaries, each representing a Kindle ebook
+        with the following keys:
+            - title (str): Book title
+            - author (str): Author name(s) in [First] [Last] format
+            - asin (str): Amazon Standard Identification Number
+            - origin (str): Ebook's origin (e.g. "Purchase", "KindleUnlimited").
     """
 
     tree = ET.parse(path)
