@@ -1,8 +1,7 @@
 import requests
 import time
 # TODO: implement clean cancellation of enrichment
-# TODO: what else for mystery one?
-# TODO: maybe add api header for identification - user input in TUI??
+
 VALID_GENRES = {
     "fantasy": ["fantasy", "epic fantasy", "romantic fantasy", "urban fantasy", "dark fantasy"],
     "science fiction": ["science fiction", "sci-fi", "scifi", "cyberpunk"],
@@ -20,7 +19,8 @@ VALID_GENRES = {
 
 def extract_genres(subjects, max_genres=2):
     """
-
+    Iterates through VALID GENRES dictionary and subjects found in openlibrary
+    and finds valid genres; separated by a comma for up to [max_genres].
 
     Args:
         subjects: a list of subjects/ genres
@@ -51,15 +51,28 @@ def extract_genres(subjects, max_genres=2):
 
 
 def fetch_metadata(title, author):
+    """
+    Using the response from a query to openlibrary, extracts valid genre
+    from metadata and page count if available.
+
+    Args:
+        title(str): title of the book
+        author(str): author of the book
+
+    Returns:
+        A dictionary of the books page count and genre if found, else an empty dictionary.
+    """
     query = f"title:{title} author:{author} language:eng".replace(" ", "+")
     url = f"https://openlibrary.org/search.json?q={query}&fields=key,title,subject,number_of_pages_median"
-
+    headers = {
+        "User-Agent": "KindleLibraryExporter/1.0 (https://github.com/georgiamal/kindle_library_exporter)"
+    }
     try:
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, timeout=5, headers=headers)
         data = response.json()
 
         if data.get("numFound", 0) == 0:
-            return {"page_count": "", "genre": ""}
+            return {"Genre": "", "Page count": ""}
 
         doc = data["docs"][0]
 
@@ -67,23 +80,35 @@ def fetch_metadata(title, author):
         genre = extract_genres(subjects, max_genres=2)
         page_count = doc.get("number_of_pages_median", "")
         return {
-            "page_count": page_count,
-            "genre": genre,
+            "Genre": genre,
+            "Page count": page_count,
         }
 
     except Exception as e:
         print(f"  ERROR: {e}")
-        return {"page_count": "", "genre": ""}
+        return {"Genre": "", "Page count": ""}
 
 
 def enrich_books(books):
+    """
+    Enrich book list with metadata from openlibrary.
+    Adds page count and genre fields to enriched books.
+
+    Args:
+        books: list of dicts containing book data.
+
+    Returns:
+        List of dicts containing enriched books, with page count
+        and genre fields if found, else empty fields.
+    """
+    # TODO: add something for if author/book title is missing?
     enriched_books = []
     total = len(books)
 
     for i, book in enumerate(books, 1):
         print(f"Processing book {i}/{total}")
 
-        metadata = fetch_metadata(book["title"], book["author"])
+        metadata = fetch_metadata(book["Title"], book["Author"])
         enriched_book = {**book, **metadata}
         enriched_books.append(enriched_book)
 
