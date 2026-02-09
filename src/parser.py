@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
-# TODO: remove asin
+
+
 def parse_kindle_books(path):
     """
     Parses Kindle for PC app's metadata XML file
@@ -56,10 +57,9 @@ def parse_kindle_books(path):
         author_str = ", ".join(authors)
 
         books.append({
-            "title": title,
-            "author": author_str,
-            "asin": meta.findtext("ASIN"),
-            "origin": meta.findtext("origins/origin/type"),
+            "Title": title,
+            "Author": author_str,
+            "Format": "Kindle",
         })
     return books
 
