@@ -28,5 +28,3 @@ def export_to_csv(books: List[Dict], output_path: Path):
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(books)
-
-    print(f"Wrote {len(books)} books to {output_path}")

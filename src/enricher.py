@@ -1,5 +1,4 @@
 import requests
-import time
 # TODO: implement clean cancellation of enrichment
 
 VALID_GENRES = {
@@ -87,31 +86,3 @@ def fetch_metadata(title, author):
     except Exception as e:
         print(f"  ERROR: {e}")
         return {"Genre": "", "Page count": ""}
-
-
-def enrich_books(books):
-    """
-    Enrich book list with metadata from openlibrary.
-    Adds page count and genre fields to enriched books.
-
-    Args:
-        books: list of dicts containing book data.
-
-    Returns:
-        List of dicts containing enriched books, with page count
-        and genre fields if found, else empty fields.
-    """
-    # TODO: add something for if author/book title is missing?
-    enriched_books = []
-    total = len(books)
-
-    for i, book in enumerate(books, 1):
-        print(f"Processing book {i}/{total}")
-
-        metadata = fetch_metadata(book["Title"], book["Author"])
-        enriched_book = {**book, **metadata}
-        enriched_books.append(enriched_book)
-
-        time.sleep(0.5)
-
-    return enriched_books
