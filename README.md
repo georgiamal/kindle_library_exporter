@@ -10,7 +10,6 @@ A python tool to export your Kindle Library from the local Kindle for PC cache f
 ### Demo
 
 ![Example Terminal Output](screenshot.png)
-![Example Terminal Output](screenshot1.png)
 
 ### Prerequisites
 * Some recent Python version - *3.13 was used when making this*
