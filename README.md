@@ -67,7 +67,7 @@ OpenLibrary's API isn't complete with metadata for all books. This means sometim
 
 #### Rate limit
 The tool includes a 0.5-second delay between requests to the API.
-For my 237 kindle books it took about 5 minutes.
+For my 237 kindle books it took about 6 minutes.
 
 #### Genre standardization
 
