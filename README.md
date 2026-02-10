@@ -1,5 +1,4 @@
 ## 📚 Kindle Library Exporter
-***
 A python tool to export your Kindle Library from the local Kindle for PC cache file and enrich with metadata from OpenLibrary API.
 
 ### Features
