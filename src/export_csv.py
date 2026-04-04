@@ -5,7 +5,14 @@ from typing import List, Dict
 
 def export_to_csv(books: List[Dict], output_path: Path):
     """
+    Export parsed books to a csv file.
 
+    Args:
+        books: list[dict] of parsed books
+        output_path: path to output csv file
+
+    Returns:
+        None
     """
 
     output_path = Path(output_path)
@@ -21,5 +28,3 @@ def export_to_csv(books: List[Dict], output_path: Path):
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(books)
-
-    print(f"Wrote {len(books)} books to {output_path}")

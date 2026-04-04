@@ -1,8 +1,22 @@
 import xml.etree.ElementTree as ET
 
+
 def parse_kindle_books(path):
     """
+    Parses Kindle for PC app's metadata XML file
+    and extracts user's purchased or borrowed (Kindle Unlimited)
+    ebook information excluding any default books like dictionaries.
 
+    Args:
+        path: path to the KindleSyncMetadataCache.xml file.
+
+    Returns:
+        list[dict]: a list of dictionaries, each representing a Kindle ebook
+        with the following keys:
+            - title (str): Book title excluding anything in "()" or after ":"
+            - author (str): Author name(s) in [First] [Last] format
+            - asin (str): Amazon Standard Identification Number
+            - origin (str): Ebook's origin (e.g. "Purchase", "KindleUnlimited").
     """
 
     tree = ET.parse(path)
@@ -14,10 +28,21 @@ def parse_kindle_books(path):
             continue
 
         origin_type = meta.findtext("origins/origin/type")
+        # Skip default books, dictionaries etc
         if origin_type != "Purchase" and origin_type != "KindleUnlimited":
             continue
 
-        # Get all authors
+        # Exclude anything from ":" and after from title
+        title_raw = meta.findtext("title")
+        if ":" in title_raw:
+            title = title_raw[:title_raw.index(":")]
+        else:
+            title = title_raw
+        # Exclude anything from "(" and after from title
+        if "(" in title:
+            title = title[:title.index("(")]
+
+        # Format authors in [First] [Last] name before appending
         authors_raw = [a.text.strip() for a in meta.findall("authors/author") if a.text]
 
         authors = []
@@ -36,6 +61,9 @@ def parse_kindle_books(path):
             "author": author_str,
             "asin": meta.findtext("ASIN"),
             "origin": meta.findtext("origins/origin/type"),
+            "Title": title,
+            "Author": author_str,
+            "Format": "Kindle",
         })
     return books
 
